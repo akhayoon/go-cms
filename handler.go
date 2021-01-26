@@ -98,6 +98,15 @@ func HandleNew(w http.ResponseWriter, r *http.Request) {
 		}
 
 		if contentType == "post" {
+			p := &Page {
+				Title: title,
+				Content: content
+			}
+			_, err = CreatePage(p)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
 			Tmpl.ExecuteTemplate(w, "post", &Post{
 				Title:   title,
 				Content: content,

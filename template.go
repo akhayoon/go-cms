@@ -10,6 +10,7 @@ var Tmpl = template.Must(template.ParseGlob("templates/*"))
 
 // Page is the struct used for each webpage
 type Page struct {
+	ID      int
 	Title   string
 	Content string
 	Posts   []*Post
@@ -17,6 +18,7 @@ type Page struct {
 
 // Post is the struct used for each blog post
 type Post struct {
+	ID            int
 	Title         string
 	Content       string
 	DatePublished time.Time
@@ -25,6 +27,7 @@ type Post struct {
 
 // Comment is the struct used for each comment
 type Comment struct {
+	ID            int
 	Author        string
 	Comment       string
 	DatePublished time.Time
