@@ -2,6 +2,7 @@ package cms
 
 import (
 	"database/sql"
+	"os"
 
 	// Use the Postgres SQL driver
 	_ "github.com/lib/pq"
@@ -58,7 +59,7 @@ func GetPages() ([]*Page, error) {
 }
 
 func newDB() *PgStore {
-	db, err := sql.Open("postgres", "user=goprojects dbname=goprojects sslmode=disable")
+	db, err := sql.Open("postgres", os.Getenv("DATABASE_URL"))
 	if err != nil {
 		panic(err)
 	}
