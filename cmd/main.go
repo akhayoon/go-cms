@@ -3,7 +3,7 @@ package main
 import (
 	"net/http"
 
-	"goprojects/cms"
+	cms "goprojects/cms3.4"
 )
 
 func main() {

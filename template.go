@@ -28,6 +28,7 @@ type Post struct {
 // Comment is the struct used for each comment
 type Comment struct {
 	ID            int
+	PostID        int
 	Author        string
 	Comment       string
 	DatePublished time.Time

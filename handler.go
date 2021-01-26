@@ -1,6 +1,7 @@
 package cms
 
 import (
+	"fmt"
 	"net/http"
 	"strings"
 	"time"
@@ -41,16 +42,22 @@ func ServePage(w http.ResponseWriter, r *http.Request) {
 	path := strings.TrimLeft(r.URL.Path, "/page/")
 
 	if path == "" {
-		http.NotFound(w, r)
+		pages, err := GetPages()
+		if err != nil {
+			http.Error(w, err.Error(), http.StatusInternalServerError)
+			return
+		}
+		Tmpl.ExecuteTemplate(w, "pages", pages)
 		return
 	}
 
-	p := &Page{
-		Title:   strings.ToTitle(path),
-		Content: "Here is my page",
+	page, err := GetPage(path)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusNotFound)
+		return
 	}
 
-	Tmpl.ExecuteTemplate(w, "page", p)
+	Tmpl.ExecuteTemplate(w, "page", page)
 }
 
 // ServePost serves a post
@@ -90,27 +97,32 @@ func HandleNew(w http.ResponseWriter, r *http.Request) {
 		r.ParseForm()
 
 		if contentType == "page" {
-			Tmpl.ExecuteTemplate(w, "page", &Page{
+			p := &Page{
 				Title:   title,
 				Content: content,
-			})
-			return
-		}
-
-		if contentType == "post" {
-			p := &Page {
-				Title: title,
-				Content: content
 			}
-			_, err = CreatePage(p)
+			_, err := CreatePage(p)
 			if err != nil {
 				http.Error(w, err.Error(), http.StatusInternalServerError)
 				return
 			}
-			Tmpl.ExecuteTemplate(w, "post", &Post{
-				Title:   title,
-				Content: content,
-			})
+			Tmpl.ExecuteTemplate(w, "page", p)
+			return
+		}
+
+		if contentType == "post" {
+			p := &Post{
+				Title:         title,
+				Content:       content,
+				DatePublished: time.Now(),
+			}
+			id, err := CreatePost(p)
+			if err != nil {
+				http.Error(w, err.Error(), http.StatusInternalServerError)
+				return
+			}
+			Tmpl.ExecuteTemplate(w, "post", p)
+			fmt.Printf("Created post with id: %d\n", id)
 			return
 		}
 	default:
