@@ -1,1 +1,1 @@
-web: cmsf
+web: cmd/main.go
